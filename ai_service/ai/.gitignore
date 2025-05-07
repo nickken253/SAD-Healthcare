@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+.env
+venv/
+hms_env/ # Nếu bạn có môi trường ảo tên là hms_env trong thư mục này
+env/
+ENV/
+*.env.*
+!*.env.example
+
+# IDE/Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Keras / Model files (nếu bạn không muốn commit các model lớn)
+# Cân nhắc việc commit các model nhỏ hoặc file cấu trúc model,
+# và tải các trọng số lớn từ một nơi lưu trữ khác (ví dụ: Git LFS, cloud storage)
+# *.keras
+# *.h5
+# *.pickle
+
+# Dataset files (nếu lớn và không muốn commit)
+# *.csv
+# *.json # Cẩn thận, có thể bạn muốn commit một số file json cấu hình như intents.json
+#         # Chỉ bỏ qua nếu đó là file dữ liệu lớn hoặc output tạm thời.
+intents.txt # Nếu đây là file dữ liệu thô lớn
+
+# Output/Log files
+logs/
+*.log
+output/
+results/
+*.png # Nếu các file png là output, ví dụ: symptom_confusion_matrix_vi.png
+      # Nếu một số png là assets cần thiết cho UI (trong static/templates) thì đừng bỏ qua.
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Windows specific
+desktop.ini
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# PyInstaller
+# *.manifest
+# *.spec

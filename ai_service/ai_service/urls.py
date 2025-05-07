@@ -16,10 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenVerifyView # Thêm import này
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Include URLs của app 'ai' với tiền tố /api/v1/ai/
     path('api/v1/ai/', include('ai.urls', namespace='ai')),
-    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]

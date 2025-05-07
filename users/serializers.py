@@ -105,29 +105,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         return user
     
+# user_service/users/serializers.py
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super().get_token(user) # Gọi phương thức gốc để lấy token
+        token = super().get_token(user)
 
-        # Thêm các custom claims vào token payload
-        token['username'] = user.username # Thêm username
-        token['is_staff'] = user.is_staff # Thêm cờ is_staff
-        # Lấy danh sách tên các role của user
+        token['username'] = user.username
+        token['is_staff'] = user.is_staff
         roles = [role.name for role in user.roles.all()]
         token['roles'] = roles
-
+        # QUAN TRỌNG: SimpleJWT mặc định sử dụng 'user_id' cho khóa chính của user.
+        # Bạn có thể không cần thêm 'user_id' một cách tường minh ở đây nếu user.id được dùng làm khóa chính.
+        # Tuy nhiên, nếu bạn *đã* thêm một claim tường minh như token['user_id'] = user.id,
+        # thì 'USER_ID_CLAIM' trong settings.py của ai_service phải là 'user_id'.
+        # Nếu bạn không thêm tường minh, SimpleJWT sẽ tìm 'user_id' hoặc 'id' theo mặc định.
+        # Để chắc chắn, hãy đảm bảo user_service ghi ID vào claim mà ai_service mong đợi.
+        # Ví dụ, nếu user_service cũng cấu hình 'USER_ID_FIELD': 'id' và 'USER_ID_CLAIM': 'user_id'
+        # thì token sẽ có claim 'user_id' chứa user.id.
         return token
-
-    # (Tùy chọn) Có thể ghi đè phương thức validate để thêm dữ liệu vào response khi login thành công
-    # def validate(self, attrs):
-    #     data = super().validate(attrs) # data chứa access và refresh token
-    #     # Thêm thông tin user vào response (ngoài token)
-    #     data['user'] = {
-    #         'id': self.user.id,
-    #         'username': self.user.username,
-    #         'email': self.user.email,
-    #         'is_staff': self.user.is_staff,
-    #         'roles': [role.name for role in self.user.roles.all()]
-    #     }
-    #     return data
