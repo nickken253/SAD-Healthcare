@@ -12,7 +12,8 @@ class AIChatProxyView(APIView):
     """
     API Proxy để gửi tin nhắn đến chatbot Flask hiện có và nhận phản hồi.
     """
-    permission_classes = [permissions.IsAuthenticated] # Yêu cầu user đăng nhập
+    # permission_classes = [permissions.IsAuthenticated] # Yêu cầu user đăng nhập
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
         user_message = request.data.get('message')

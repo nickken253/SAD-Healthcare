@@ -147,22 +147,42 @@ TIME_ZONE = 'Asia/Ho_Chi_Minh' # Đặt timezone phù hợp (ví dụ: Việt Na
 USE_I18N = True
 USE_TZ = True # Rất quan trọng khi làm việc với DateTimeField
 
-# Cấu hình Simple JWT
+# Cấu hình Simple JWT cho các service nhận token
 SIMPLE_JWT = {
-    # Thời gian sống token (giữ mặc định hoặc copy từ user_service nếu muốn)
+    # Có thể đặt giống user_service hoặc để mặc định nếu không sao chép từ user_service
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
 
-    # --- THÊM DÒNG QUAN TRỌNG NÀY ---
-    # Quy tắc xác thực user: Chỉ xác thực token, không cần tìm user trong DB cục bộ
+    # --- RULE QUAN TRỌNG ĐỂ KHÔNG TÌM USER TRONG DB CỤC BỘ ---
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule_no_user_lookup',
-    # ---------------------------------
+    # ----------------------------------------------------------
 
-    # Giữ các cài đặt khác nếu bạn đã copy từ user_service, hoặc để mặc định
+    # Các cài đặt khác đảm bảo giống user_service (nơi tạo token)
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY, # Đảm bảo dùng key chung
+    'SIGNING_KEY': SECRET_KEY, # Đảm bảo biến SECRET_KEY ở trên là key chung
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id', # Tên trường trong model User của user_service
-    'USER_ID_CLAIM': 'user_id', # Tên claim trong JWT payload chứa user ID
-    # ... (các cài đặt khác có thể giữ mặc định)
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',        # Tên trường ID trong model User gốc (users.User)
+    'USER_ID_CLAIM': 'user_id',   # Tên claim chứa ID trong JWT payload
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule_no_user_lookup', # Nhắc lại cho chắc
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    # Quan trọng: Dùng TokenUser để biểu diễn user khi không lookup DB
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
