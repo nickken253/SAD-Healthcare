@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -140,3 +141,23 @@ REST_FRAMEWORK = {
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_I18N = True
 USE_TZ = True
+
+# Cấu hình Simple JWT
+SIMPLE_JWT = {
+    # Thời gian sống token (giữ mặc định hoặc copy từ user_service nếu muốn)
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    # --- THÊM DÒNG QUAN TRỌNG NÀY ---
+    # Quy tắc xác thực user: Chỉ xác thực token, không cần tìm user trong DB cục bộ
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule_no_user_lookup',
+    # ---------------------------------
+
+    # Giữ các cài đặt khác nếu bạn đã copy từ user_service, hoặc để mặc định
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY, # Đảm bảo dùng key chung
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id', # Tên trường trong model User của user_service
+    'USER_ID_CLAIM': 'user_id', # Tên claim trong JWT payload chứa user ID
+    # ... (các cài đặt khác có thể giữ mặc định)
+}
