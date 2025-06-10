@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Chép toàn bộ code của service vào container
 COPY . .
 
-# Mở port 8000
-EXPOSE 8000
+# Mở port 8001
+EXPOSE 8001
 
-# Chạy ứng dụng khi container khởi động
-CMD ["python", "-m", "uvicorn", "user_service.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+# Chạy ứng dụng khi container khởi động (thay tên 'main:app' nếu cần)
+CMD ["uvicorn", "appointment_service.asgi:application", "--host", "0.0.0.0", "--port", "8001"]

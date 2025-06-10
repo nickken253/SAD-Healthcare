@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+sqlalchemy
+
+Django
+djangorestframework
+
+# Thư viện cho JWT token (xác thực)
+djangorestframework-simplejwt
+
+# Các thư viện khác
+psycopg2-binary
+Pillow
