@@ -1,0 +1,74 @@
+# SAD-Healthcare/docker-compose.yml
+version: '3.8'
+
+services:
+  user_service:
+    build: ./user_service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./user_service:/app  # Mount code để live reload
+      - user_db_data:/app/db_data # Volume cho SQLite (xem lưu ý)
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=user_service.settings
+    restart: unless-stopped
+
+  appointment_service:
+    build: ./appointment_service
+    command: python manage.py runserver 0.0.0.0:8000 # Django app chạy trên cổng 8000 bên trong container
+    volumes:
+      - ./appointment_service:/app
+      - appointment_db_data:/app/db_data
+    ports:
+      - "8001:8000" # Map cổng 8001 của host ra cổng 8000 của container
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=appointment_service.settings
+    restart: unless-stopped
+
+  clinical_service:
+    build: ./clinical_service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./clinical_service:/app
+      - clinical_db_data:/app/db_data
+    ports:
+      - "8002:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=clinical_service.settings
+    restart: unless-stopped
+
+  chatbot_flask: # Tên service của Chatbot Flask
+    build: ./ChatbotForHealthcare
+    command: python app.py # app.py của bạn chạy Flask trên cổng 5000
+    volumes:
+      - ./ChatbotForHealthcare:/app # Mount code chatbot
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  ai_service:
+    build: ./ai_service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./ai_service:/app
+      - ai_db_data:/app/db_data
+    ports:
+      - "8003:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_SETTINGS_MODULE=ai_service.settings
+      # URL để ai_service gọi đến chatbot_flask service
+      - EXISTING_CHATBOT_API_URL=http://chatbot_flask:5000/chat
+    depends_on: # Đảm bảo chatbot_flask khởi động trước (hoặc ít nhất là cùng lúc)
+      - chatbot_flask
+    restart: unless-stopped
+
+volumes: # Định nghĩa named volumes để lưu trữ dữ liệu SQLite
+  user_db_data:
+  appointment_db_data:
+  clinical_db_data:
+  ai_db_data:

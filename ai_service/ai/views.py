@@ -12,6 +12,7 @@ logger = logging.getLogger('ai')
 chatbot_core_instance = None
 chatbot_ready_flag = False
 initialization_error = None
+EXISTING_CHATBOT_API_URL = os.environ.get("EXISTING_CHATBOT_API_URL", "http://127.0.0.1:5000/chat")
 
 # --- CỐ GẮNG IMPORT VÀ TẢI TÀI NGUYÊN NGAY LẬP TỨC ---
 logger.info("Attempting to import and initialize chatbot_core at module level...")
